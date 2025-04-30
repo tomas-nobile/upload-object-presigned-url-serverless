@@ -1,7 +1,7 @@
 {
-  "name": "btp-to-dsm-service",
+  "name": "upload-object-presigned-url-serverless",
   "version": "1.0.0",
-  "description": "BTP to DSM integration service",
+  "description": "upload-object-presigned-url-serverless",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

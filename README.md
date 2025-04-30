@@ -1,11 +1,11 @@
-# BTP to DSM Service
+# Upload Object Presigned URL Serverless
 
-This service provides API endpoints for BTP to DSM integration, including authorization and file URL management.
+This service provides API endpoints for secure file uploads using presigned S3 URLs, including authentication and URL management.
 
 ## Project Structure
 
 ```
-btp-to-dsm-service/
+upload-object-presigned-url-serverless/
 ├── serverless.yml        # Combined serverless configuration
 ├── stage-config.yml      # Environment-specific configuration (not in Git)
 ├── stage-config-sample.yml # Sample configuration template
@@ -78,7 +78,7 @@ This project uses stage-specific configuration for different environments (test,
 
 The service automatically creates an S3 bucket for file storage:
 
-- **Bucket Name**: `btp-to-dsm-service-[stage]-bucket` (e.g., `btp-to-dsm-service-test-bucket`)
+- **Bucket Name**: `upload-object-presigned-url-serverless-[stage]-bucket` (e.g., `upload-object-presigned-url-serverless-test-bucket`)
 - **CORS Configuration**: Enabled for PUT, POST, and GET operations
 - **Permissions**: The Lambda functions have necessary permissions to interact with the bucket
 - **Creation**: Managed through CloudFormation in serverless.yml
