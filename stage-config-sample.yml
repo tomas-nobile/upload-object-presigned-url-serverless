@@ -1,0 +1,29 @@
+# Sample configuration file
+# Copy this file to stage-config.yml and update with your actual values
+
+test:
+  authorizer:
+    username: "your-test-username"
+    ps1: "your-test-password1"
+    ps2: "your-test-password2"
+  putFileUrls:
+    bucketName: "your-test-bucket-name"
+    filePath: "test/uploads"
+
+stage:
+  authorizer:
+    username: "your-stage-username"
+    ps1: "your-stage-password1"
+    ps2: "your-stage-password2"
+  putFileUrls:
+    bucketName: "your-stage-bucket-name"
+    filePath: "stage/uploads"
+  
+prod:
+  authorizer:
+    username: "your-prod-username"
+    ps1: "your-prod-password1"
+    ps2: "your-prod-password2"
+  putFileUrls:
+    bucketName: "your-prod-bucket-name"
+    filePath: "prod/uploads" 

@@ -1,0 +1,49 @@
+service: test
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: ${opt:stage, 'test'}
+  region: ${opt:region, 'us-east-1'}
+  apiGateway:
+    shouldStartNameWithService: true
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+
+functions:
+  authorizer:
+    handler: src/authorizer/index.handler
+    environment:
+      username: ${self:custom.stageConfig.authorizer.username}
+      ps1: ${self:custom.stageConfig.authorizer.ps1}
+      ps2: ${self:custom.stageConfig.authorizer.ps2}
+
+  putFileUrls:
+    handler: src/putFileUrls/index.handler
+    environment:
+      bucketName: ${self:custom.stageConfig.putFileUrls.bucketName}
+      filePath: ${self:custom.stageConfig.putFileUrls.filePath}
+      region: ${self:provider.region}
+    events:
+      - http:
+          path: /file-urls
+          method: post
+          cors: true
+          authorizer:
+            name: authorizer
+            type: request
+            identitySource: method.request.header.Authorization
+
+resources:
+  Resources:
+    FileBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.stageConfig.putFileUrls.bucketName}
+
+custom:
+  stageConfig: ${file(./stage-config.yml):${self:provider.stage}}
+  serverless-offline:
+    httpPort: 3000 

@@ -1,0 +1,23 @@
+{
+  "name": "btp-to-dsm-service",
+  "version": "1.0.0",
+  "description": "BTP to DSM integration service",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "serverless offline",
+    "deploy": "serverless deploy"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.374.0",
+    "@aws-sdk/s3-request-presigner": "^3.374.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.119",
+    "@types/node": "^20.17.32",
+    "serverless": "^3.33.0",
+    "serverless-offline": "^12.0.4",
+    "serverless-plugin-typescript": "^2.1.5",
+    "typescript": "^5.1.6"
+  }
+}
