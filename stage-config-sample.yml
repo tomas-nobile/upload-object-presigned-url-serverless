@@ -9,6 +9,8 @@ test:
   putFileUrls:
     bucketName: "your-test-bucket-name"
     filePath: "test/uploads"
+  getFileUrls:
+    bucketName: "your-test-bucket-name"
 
 stage:
   authorizer:
@@ -18,6 +20,8 @@ stage:
   putFileUrls:
     bucketName: "your-stage-bucket-name"
     filePath: "stage/uploads"
+  getFileUrls:
+    bucketName: "your-stage-bucket-name"
   
 prod:
   authorizer:
@@ -26,4 +30,6 @@ prod:
     ps2: "your-prod-password2"
   putFileUrls:
     bucketName: "your-prod-bucket-name"
-    filePath: "prod/uploads" 
+    filePath: "prod/uploads"
+  getFileUrls:
+    bucketName: "your-prod-bucket-name" 

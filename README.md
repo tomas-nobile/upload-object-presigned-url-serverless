@@ -16,14 +16,22 @@ upload-object-presigned-url-serverless/
     │   ├── index.ts
     │   └── service/
     │       └── auth-service.ts
-    └── putFileUrls/      # File URL management function
+    ├── putFileUrls/      # File upload URL generation function
+    │   ├── index.ts
+    │   ├── models/
+    │   │   └── file-models.ts
+    │   ├── service/
+    │   │   └── s3-service.ts
+    │   └── utils/
+    │       └── validators.ts
+    └── getFileUrls/      # File download URL generation function
         ├── index.ts
         ├── models/
         │   └── file-models.ts
         ├── service/
         │   └── s3-service.ts
         └── utils/
-            └── validators.ts
+            └── response-utils.ts
 ```
 
 ## Lambda Functions
@@ -57,6 +65,23 @@ The PutFileUrls Lambda generates presigned S3 URLs for file uploads:
 - **Status Codes**:
   - 200: URLs successfully generated
   - 400: Invalid request format or validation errors
+  - 500: Internal server error
+
+### GetFileUrls
+
+The GetFileUrls Lambda generates presigned S3 URLs for file downloads:
+
+- **Functionality**: Creates presigned URLs for downloading existing S3 objects.
+- **Request Format**: An object with a `s3ObjectNames` property containing an array of S3 object names.
+- **S3 Object Verification**: Checks if each object exists in the bucket before generating a URL.
+- **URL Expiration**: 5 minutes (300 seconds)
+- **Response Format**: Returns an array of objects with:
+  - `s3ObjectName`: The original S3 object name
+  - `s3FetchUrl`: The presigned URL for downloading the file (or `null` if file doesn't exist)
+- **Endpoint**: POST /get-file-urls (protected by authorizer)
+- **Status Codes**:
+  - 200: URLs successfully generated (even if some objects don't exist)
+  - 400: Invalid request format
   - 500: Internal server error
 
 ## Configuration
@@ -93,6 +118,10 @@ The service automatically creates an S3 bucket for file storage:
 ### PutFileUrls
 - `bucketName`: S3 bucket name for file uploads (automatically set to the created bucket)
 - `filePath`: Base path for S3 objects
+- `region`: AWS region for S3 operations (automatically set to the deployment region)
+
+### GetFileUrls
+- `bucketName`: S3 bucket name for file downloads (same as PutFileUrls)
 - `region`: AWS region for S3 operations (automatically set to the deployment region)
 
 ## Setup
@@ -173,6 +202,33 @@ Response:
 ]
 ```
 
+### GetFileUrls
+```
+POST /get-file-urls
+Content-Type: application/json
+
+{
+  "s3ObjectNames": [
+    "test/uploads/2023-07-15_14-25-36-789_document1.pdf",
+    "test/uploads/2023-07-15_14-25-36-790_image1.jpg"
+  ]
+}
+```
+
+Response:
+```json
+[
+  {
+    "s3ObjectName": "test/uploads/2023-07-15_14-25-36-789_document1.pdf",
+    "s3FetchUrl": "https://s3-presigned-url-for-downloading-document1"
+  },
+  {
+    "s3ObjectName": "test/uploads/2023-07-15_14-25-36-790_image1.jpg",
+    "s3FetchUrl": "https://s3-presigned-url-for-downloading-image1"
+  }
+]
+```
+
 ## Using Presigned URLs with Postman
 
 ### Step 1: Get Presigned URLs
@@ -200,8 +256,15 @@ Response:
 5. Add Content-Type header matching your file type (e.g., `application/pdf`)
 6. Send the request
 
+### Step 3: Download File Using a Presigned URL
+1. Get download URLs by sending a request to `/get-file-urls` with the object names
+2. Create a GET request in Postman
+3. Paste the `s3FetchUrl` value as the request URL
+4. Send the request to download the file
+
 Important notes:
-- Presigned URLs expire after 2 minutes
-- Use PUT method (not POST)
-- Content-Type must match the file type you're uploading
-- No authentication needed for the S3 upload request 
+- Upload URLs expire after 2 minutes
+- Download URLs expire after 5 minutes
+- Use PUT method for uploading files
+- Use GET method for downloading files
+- No authentication needed for the S3 upload/download requests 

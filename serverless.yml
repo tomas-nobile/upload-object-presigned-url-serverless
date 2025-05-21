@@ -1,4 +1,4 @@
-service: test
+service: btp-to-dsm-service
 
 provider:
   name: aws
@@ -29,6 +29,21 @@ functions:
     events:
       - http:
           path: /file-urls
+          method: post
+          cors: true
+          authorizer:
+            name: authorizer
+            type: request
+            identitySource: method.request.header.Authorization
+
+  getFileUrls:
+    handler: src/getFileUrls/index.handler
+    environment:
+      bucketName: ${self:custom.stageConfig.getFileUrls.bucketName}
+      region: ${self:provider.region}
+    events:
+      - http:
+          path: /get-file-urls
           method: post
           cors: true
           authorizer:
